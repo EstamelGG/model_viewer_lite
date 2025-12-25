@@ -79,6 +79,14 @@
 
         .btn-select:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
+        .upload-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            color: #888;
+            display: block;
+        }
+
         .hint { color: #888; font-size: 18px; font-weight: 300; }
 
         model-viewer {
@@ -218,6 +226,11 @@
     <div class="glass-frame" id="dropZone">
         <div class="inner-content">
             <div class="upload-ui" id="uploadUI">
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
                 <p class="hint">Drag and drop a 3D model (.glb/.gltf) here </p>
                 <button class="btn-select" onclick="document.getElementById('fileInput').click()">Select model (.glb/.gltf) from device</button>
             </div>
