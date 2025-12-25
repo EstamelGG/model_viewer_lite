@@ -142,11 +142,24 @@
             pointer-events: auto;
         }
 
+        /* 让图标看起来像个按钮 */
         .brightness-icon {
             width: 20px;
             height: 20px;
             flex-shrink: 0;
+            cursor: pointer; /* 鼠标悬停变小手 */
+            transition: transform 0.2s ease, color 0.2s ease;
             color: #555;
+        }
+
+        /* 悬停和点击时的视觉反馈 */
+        .brightness-icon:hover {
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        .brightness-icon:active {
+            transform: scale(0.9);
         }
 
         .brightness-slider {
@@ -227,6 +240,22 @@
         const infoTag = document.getElementById('infoTag');
         const brightnessControl = document.getElementById('brightnessControl');
         const brightnessSlider = document.getElementById('brightnessSlider');
+        const brightnessIcon = document.querySelector('.brightness-icon');
+
+        // 点击太阳图标重置亮度
+        brightnessIcon.addEventListener('click', () => {
+            const defaultValue = 1;
+
+            // 1. 更新模型亮度
+            modelViewer.exposure = defaultValue;
+
+            // 2. 同步滑动条的位置
+            brightnessSlider.value = defaultValue;
+
+            // 3. 可选：添加一个小震动反馈效果（如果是在手机上）
+            if (navigator.vibrate) navigator.vibrate(10);
+        });
+        
         let currentUrl = null;
 
         function handleFile(file) {
