@@ -116,6 +116,29 @@
 
         .info-tag.show { opacity: 1; }
 
+        .error-tag {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 87, 87, 0.95);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 16px rgba(255, 87, 87, 0.3);
+            z-index: 20;
+            max-width: 80%;
+            text-align: center;
+        }
+
+        .error-tag.show { opacity: 1; }
+
         /* 亮度控制组件 */
         .brightness-control {
             position: absolute;
@@ -223,6 +246,7 @@
             </model-viewer>
 
             <div class="info-tag" id="infoTag"></div>
+            <div class="error-tag" id="errorTag"></div>
 
             <div class="brightness-control" id="brightnessControl">
                 <svg class="control-icon" id="openFileIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="打开文件">
@@ -251,6 +275,7 @@
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
         const infoTag = document.getElementById('infoTag');
+        const errorTag = document.getElementById('errorTag');
         const brightnessControl = document.getElementById('brightnessControl');
         const brightnessSlider = document.getElementById('brightnessSlider');
         const brightnessIcon = document.querySelector('.brightness-icon');
@@ -312,6 +337,9 @@
         function handleFile(file) {
             if (!file) return;
 
+            // 隐藏之前的错误提示
+            errorTag.classList.remove('show');
+
             if (currentUrl) URL.revokeObjectURL(currentUrl);
             currentUrl = URL.createObjectURL(file);
 
@@ -322,6 +350,41 @@
 
             infoTag.textContent = `Model: ${file.name} | ${(file.size / (1024 * 1024)).toFixed(2)}MB`;
             infoTag.classList.add('show');
+
+            // 监听 model-viewer 的内置错误事件
+            const errorHandler = (event) => {
+                // 从事件中获取错误信息
+                let errorMessage = 'Failed to load model';
+                
+                // 尝试从事件中提取错误信息
+                if (event.detail && event.detail.type) {
+                    errorMessage = `${event.detail.type}`;
+                } else if (event.message) {
+                    errorMessage = `${event.message}`;
+                } else if (event.target && event.target.error) {
+                    errorMessage = `${event.target.error.message || 'Unknown error'}`;
+                }
+                
+                // 显示错误提示
+                errorTag.textContent = errorMessage;
+                errorTag.classList.add('show');
+                
+                // 恢复上传界面，隐藏模型视图和亮度控制
+                modelViewer.classList.remove('active');
+                brightnessControl.classList.remove('show');
+                infoTag.classList.remove('show');
+                uploadUI.style.display = 'block';
+                
+                // 5秒后自动隐藏错误提示
+                setTimeout(() => {
+                    errorTag.classList.remove('show');
+                }, 5000);
+            };
+
+            // 移除之前的错误监听器（如果有）
+            modelViewer.removeEventListener('error', errorHandler);
+            // 添加新的错误监听器
+            modelViewer.addEventListener('error', errorHandler, { once: true });
 
             // 确保模型加载后设置初始角度并保存初始视角中心
             modelViewer.addEventListener('load', () => {
