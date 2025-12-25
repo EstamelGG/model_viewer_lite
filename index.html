@@ -257,7 +257,7 @@
         </div>
     </div>
 
-    <input type="file" id="fileInput" class="file-input">
+    <input type="file" id="fileInput" class="file-input" accept=".glb,.gltf">
 
     <script>
         const modelViewer = document.getElementById('modelViewer');
@@ -314,6 +314,18 @@
 
         function handleFile(file) {
             if (!file) return;
+
+            const fileName = file.name.toLowerCase();
+            const isValidFile = fileName.endsWith('.glb') || fileName.endsWith('.gltf');
+            
+            if (!isValidFile) {
+                errorTag.textContent = 'Only GLB or GLTF files are supported';
+                errorTag.classList.add('show');
+                setTimeout(() => {
+                    errorTag.classList.remove('show');
+                }, 5000);
+                return;
+            }
 
             errorTag.classList.remove('show');
 
