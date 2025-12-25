@@ -9,8 +9,8 @@
         :root {
             --bg-gray: #ececec;
             --glass-bg: rgba(255, 255, 255, 0.4);
-            --border-gap: 20px; /* 边缘填充感 */
-            --radius: 24px;    /* 外圆角 */
+            --border-gap: 20px;
+            --radius: 24px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,28 +26,24 @@
             justify-content: center;
         }
 
-        /* 优化后的全屏 DropZone */
         .glass-frame {
             position: relative;
-            width: 100%;  /* 撑满全宽 */
-            height: 100%; /* 撑满全高 */
+            width: 100%;
+            height: 100%;
             padding: var(--border-gap);
             background: var(--glass-bg);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: none; /* 全屏模式下取消外边框 */
+            border: none;
             display: flex;
             transition: background 0.3s ease;
         }
-
-        /* 拖拽时的视觉反馈：整个背景变色 */
         .glass-frame.dragover {
             background: rgba(255, 255, 255, 0.6);
             outline: 4px dashed rgba(0,0,0,0.1);
             outline-offset: -30px;
         }
 
-        /* 内层：内容展示区域 */
         .inner-content {
             flex: 1;
             background: #fdfdfd;
@@ -64,10 +60,9 @@
             text-align: center;
             z-index: 5;
             transition: transform 0.3s ease;
-            pointer-events: none; /* 防止干扰拖拽事件 */
+            pointer-events: none;
         }
 
-        /* 交互按钮需要恢复点击 */
         .btn-select {
             pointer-events: auto;
             margin-top: 20px;
@@ -139,18 +134,17 @@
 
         .error-tag.show { opacity: 1; }
 
-        /* 亮度控制组件 */
         .brightness-control {
             position: absolute;
             top: 20px;
             right: 20px;
             display: flex;
-            flex-direction: column; /* 改为纵向排列 */
+            flex-direction: column;
             align-items: center;
             gap: 12px;
             background: rgba(255, 255, 255, 0.9);
-            padding: 16px 12px; /* 调整内边距以适应纵向 */
-            border-radius: 50px; /* 调圆一点更美观 */
+            padding: 16px 12px;
+            border-radius: 50px;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.5);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -165,18 +159,16 @@
             pointer-events: auto;
         }
 
-        /* 让图标看起来像个按钮 */
         .brightness-icon,
         .control-icon {
             width: 20px;
             height: 20px;
             flex-shrink: 0;
-            cursor: pointer; /* 鼠标悬停变小手 */
+            cursor: pointer;
             transition: transform 0.2s ease, color 0.2s ease;
             color: #555;
         }
 
-        /* 悬停和点击时的视觉反馈 */
         .brightness-icon:hover,
         .control-icon:hover {
             color: #000;
@@ -189,17 +181,15 @@
         }
 
         .brightness-slider {
-            /* 关键：设置为纵向 */
             -webkit-appearance: slider-vertical;
             writing-mode: bt-lr;
-            width: 4px;   /* 宽度变窄 */
-            height: 120px; /* 高度拉长 */
+            width: 4px;
+            height: 120px;
             border-radius: 2px;
             background: #e0e0e0;
             outline: none;
         }
 
-        /* 针对不同浏览器的滑块圆点样式微调 */
         .brightness-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -282,53 +272,41 @@
         const openFileIcon = document.getElementById('openFileIcon');
         const resetViewIcon = document.getElementById('resetViewIcon');
 
-        // 保存初始相机设置
         const initialCameraOrbit = '45deg auto auto';
         const initialExposure = 1;
         let initialCameraTarget = null;
 
-        // 点击太阳图标重置亮度
         brightnessIcon.addEventListener('click', () => {
             const defaultValue = 1;
 
-            // 1. 更新模型亮度
             modelViewer.exposure = defaultValue;
 
-            // 2. 同步滑动条的位置
             brightnessSlider.value = defaultValue;
 
-            // 3. 可选：添加一个小震动反馈效果（如果是在手机上）
             if (navigator.vibrate) navigator.vibrate(10);
         });
 
-        // 打开文件按钮
         openFileIcon.addEventListener('click', () => {
             fileInput.click();
         });
 
-        // 重置视角按钮
         resetViewIcon.addEventListener('click', () => {
-            // 恢复初始相机角度、缩放和焦点
             modelViewer.cameraOrbit = initialCameraOrbit;
             modelViewer.fieldOfView = 'auto';
             
-            // 恢复初始视角中心
             if (initialCameraTarget && modelViewer.loaded) {
                 modelViewer.cameraTarget = initialCameraTarget;
             }
             
-            // 如果模型已加载，使用resetTurntableRotation方法
             if (modelViewer.loaded) {
                 if (typeof modelViewer.resetTurntableRotation === 'function') {
                     modelViewer.resetTurntableRotation();
                 }
             }
             
-            // 恢复初始亮度
             modelViewer.exposure = initialExposure;
             brightnessSlider.value = initialExposure;
 
-            // 震动反馈
             if (navigator.vibrate) navigator.vibrate(10);
         });
         
@@ -337,7 +315,6 @@
         function handleFile(file) {
             if (!file) return;
 
-            // 隐藏之前的错误提示
             errorTag.classList.remove('show');
 
             if (currentUrl) URL.revokeObjectURL(currentUrl);
@@ -351,12 +328,9 @@
             infoTag.textContent = `Model: ${file.name} | ${(file.size / (1024 * 1024)).toFixed(2)}MB`;
             infoTag.classList.add('show');
 
-            // 监听 model-viewer 的内置错误事件
             const errorHandler = (event) => {
-                // 从事件中获取错误信息
                 let errorMessage = 'Failed to load model';
                 
-                // 尝试从事件中提取错误信息
                 if (event.detail && event.detail.type) {
                     errorMessage = `${event.detail.type}`;
                 } else if (event.message) {
@@ -365,31 +339,24 @@
                     errorMessage = `${event.target.error.message || 'Unknown error'}`;
                 }
                 
-                // 显示错误提示
                 errorTag.textContent = errorMessage;
                 errorTag.classList.add('show');
                 
-                // 恢复上传界面，隐藏模型视图和亮度控制
                 modelViewer.classList.remove('active');
                 brightnessControl.classList.remove('show');
                 infoTag.classList.remove('show');
                 uploadUI.style.display = 'block';
                 
-                // 5秒后自动隐藏错误提示
                 setTimeout(() => {
                     errorTag.classList.remove('show');
                 }, 5000);
             };
 
-            // 移除之前的错误监听器（如果有）
             modelViewer.removeEventListener('error', errorHandler);
-            // 添加新的错误监听器
             modelViewer.addEventListener('error', errorHandler, { once: true });
 
-            // 确保模型加载后设置初始角度并保存初始视角中心
             modelViewer.addEventListener('load', () => {
                 modelViewer.cameraOrbit = '45deg auto auto';
-                // 保存初始视角中心
                 if (modelViewer.cameraTarget) {
                     initialCameraTarget = {
                         x: modelViewer.cameraTarget.x,
@@ -400,13 +367,10 @@
             }, { once: true });
         }
 
-        // 亮度控制
         brightnessSlider.addEventListener('input', (e) => {
             const value = parseFloat(e.target.value);
             modelViewer.exposure = value;
         });
-
-        // 全局拖拽事件处理
         ['dragenter', 'dragover'].forEach(evt => {
             dropZone.addEventListener(evt, (e) => {
                 e.preventDefault();
