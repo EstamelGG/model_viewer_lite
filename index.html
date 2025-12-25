@@ -342,11 +342,6 @@
                 errorTag.textContent = errorMessage;
                 errorTag.classList.add('show');
                 
-                modelViewer.classList.remove('active');
-                brightnessControl.classList.remove('show');
-                infoTag.classList.remove('show');
-                uploadUI.style.display = 'block';
-                
                 setTimeout(() => {
                     errorTag.classList.remove('show');
                 }, 5000);
