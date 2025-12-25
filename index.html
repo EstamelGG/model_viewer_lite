@@ -260,6 +260,7 @@
         // 保存初始相机设置
         const initialCameraOrbit = '45deg auto auto';
         const initialExposure = 1;
+        let initialCameraTarget = null;
 
         // 点击太阳图标重置亮度
         brightnessIcon.addEventListener('click', () => {
@@ -285,6 +286,11 @@
             // 恢复初始相机角度、缩放和焦点
             modelViewer.cameraOrbit = initialCameraOrbit;
             modelViewer.fieldOfView = 'auto';
+            
+            // 恢复初始视角中心
+            if (initialCameraTarget && modelViewer.loaded) {
+                modelViewer.cameraTarget = initialCameraTarget;
+            }
             
             // 如果模型已加载，使用resetTurntableRotation方法
             if (modelViewer.loaded) {
@@ -317,9 +323,17 @@
             infoTag.textContent = `Model: ${file.name} | ${(file.size / (1024 * 1024)).toFixed(2)}MB`;
             infoTag.classList.add('show');
 
-            // 确保模型加载后设置初始角度
+            // 确保模型加载后设置初始角度并保存初始视角中心
             modelViewer.addEventListener('load', () => {
                 modelViewer.cameraOrbit = '45deg auto auto';
+                // 保存初始视角中心
+                if (modelViewer.cameraTarget) {
+                    initialCameraTarget = {
+                        x: modelViewer.cameraTarget.x,
+                        y: modelViewer.cameraTarget.y,
+                        z: modelViewer.cameraTarget.z
+                    };
+                }
             }, { once: true });
         }
 
