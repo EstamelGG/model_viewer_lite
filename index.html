@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Model Viewer - Fullscreen</title>
+    <title>GLB Model Viewer</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
     <style>
         :root {
@@ -231,8 +231,8 @@
                     <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                     <line x1="12" y1="22.08" x2="12" y2="12"></line>
                 </svg>
-                <p class="hint">Drag and drop a 3D model (.glb/.gltf) here </p>
-                <button class="btn-select" onclick="document.getElementById('fileInput').click()">Select model (.glb/.gltf) from device</button>
+                <p class="hint">Drag and drop a GLB model here </p>
+                <button class="btn-select" onclick="document.getElementById('fileInput').click()">Select glb model from device</button>
             </div>
 
             <model-viewer
@@ -270,7 +270,7 @@
         </div>
     </div>
 
-    <input type="file" id="fileInput" class="file-input" accept=".glb,.gltf">
+    <input type="file" id="fileInput" class="file-input" accept=".glb">
 
     <script>
         const modelViewer = document.getElementById('modelViewer');
@@ -329,10 +329,10 @@
             if (!file) return;
 
             const fileName = file.name.toLowerCase();
-            const isValidFile = fileName.endsWith('.glb') || fileName.endsWith('.gltf');
+            const isValidFile = fileName.endsWith('.glb');
             
             if (!isValidFile) {
-                errorTag.textContent = 'Only GLB or GLTF files are supported';
+                errorTag.textContent = 'Only GLB files are supported';
                 errorTag.classList.add('show');
                 setTimeout(() => {
                     errorTag.classList.remove('show');
